@@ -20,3 +20,20 @@ SELECT
 FROM dim_product
 WHERE storage_type = 'Chilled'
   AND shelf_life_days < 60;
+
+-- ----------------------------------------------------------
+-- Task 02: Standard Pricing & Low Concession Audit
+-- LeetCode: 584. Find Customer Referee
+-- Business Question:
+-- Our pricing strategy team is evaluating list price adherence across our distribution network. Retrieve all orders where customers were granted a commercial discount strictly lower than 5% (including transactions with no discount applied). Display the order identifier, customer identifier, unit price, and discount percentage.
+-- ----------------------------------------------------------
+
+SELECT 
+    order_id,
+    customer_id,
+    unit_price,
+    discount_pct
+FROM fact_orders
+WHERE discount_pct < 0.05 
+   OR discount_pct IS NULL;
+   
