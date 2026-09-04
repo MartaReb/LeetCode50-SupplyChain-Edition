@@ -10,7 +10,8 @@ USE supply_chain_db;
 -- Task 01: Perishable Cold-Chain Alert
 -- LeetCode: 1757. Recyclable and Low Fat Products
 -- Business Question:
--- Our warehouse operations team needs to prioritize dispatch for high-risk perishable inventory to minimize spoilage. Retrieve the product identifier, product name, and shelf life for all chilled goods that have a shelf life strictly under 60 days.
+-- Our warehouse operations team needs to prioritize dispatch for high-risk perishable inventory to minimize spoilage. 
+--Retrieve the product identifier, product name, and shelf life for all chilled goods that have a shelf life strictly under 60 days.
 -- ----------------------------------------------------------
 
 SELECT 
@@ -25,7 +26,9 @@ WHERE storage_type = 'Chilled'
 -- Task 02: Standard Pricing & Low Concession Audit
 -- LeetCode: 584. Find Customer Referee
 -- Business Question:
--- Our pricing strategy team is evaluating list price adherence across our distribution network. Retrieve all orders where customers were granted a commercial discount strictly lower than 5% (including transactions with no discount applied). Display the order identifier, customer identifier, unit price, and discount percentage.
+-- Our pricing strategy team is evaluating list price adherence across our distribution network. 
+--Retrieve all orders where customers were granted a commercial discount strictly lower than 5% (including transactions with no discount applied). 
+--Display the order identifier, customer identifier, unit price, and discount percentage.
 -- ----------------------------------------------------------
 
 SELECT 
