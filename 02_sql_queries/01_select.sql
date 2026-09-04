@@ -39,4 +39,20 @@ SELECT
 FROM fact_orders
 WHERE discount_pct < 0.05 
    OR discount_pct IS NULL;
+
+-- ----------------------------------------------------------
+-- Task 03: High-Capacity Baltic Distribution Centers
+-- LeetCode: 595. Big Countries
+-- Business Question:
+-- Network capacity planners require a list of primary distribution hubs capable of handling large-scale pallet storage in the Baltic region. 
+--Retrieve the warehouse name, country, and pallet capacity for all warehouses located in 'Baltics' with a capacity of at least 8,000 pallets.
+-- ----------------------------------------------------------
+
+SELECT 
+    warehouse_name,
+    country,
+    capacity_pallets
+FROM dim_warehouse
+WHERE warehouse_region = 'Baltics'
+    AND capacity_pallets >= 8000;
    
