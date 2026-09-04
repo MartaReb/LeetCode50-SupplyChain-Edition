@@ -11,7 +11,7 @@ USE supply_chain_db;
 -- LeetCode: 1757. Recyclable and Low Fat Products
 -- Business Question:
 -- Our warehouse operations team needs to prioritize dispatch for high-risk perishable inventory to minimize spoilage. 
---Retrieve the product identifier, product name, and shelf life for all chilled goods that have a shelf life strictly under 60 days.
+-- Retrieve the product identifier, product name, and shelf life for all chilled goods that have a shelf life strictly under 60 days.
 -- ----------------------------------------------------------
 
 SELECT 
@@ -27,8 +27,8 @@ WHERE storage_type = 'Chilled'
 -- LeetCode: 584. Find Customer Referee
 -- Business Question:
 -- Our pricing strategy team is evaluating list price adherence across our distribution network. 
---Retrieve all orders where customers were granted a commercial discount strictly lower than 5% (including transactions with no discount applied). 
---Display the order identifier, customer identifier, unit price, and discount percentage.
+-- Retrieve all orders where customers were granted a commercial discount strictly lower than 5% (including transactions with no discount applied). 
+-- Display the order identifier, customer identifier, unit price, and discount percentage.
 -- ----------------------------------------------------------
 
 SELECT 
@@ -45,7 +45,7 @@ WHERE discount_pct < 0.05
 -- LeetCode: 595. Big Countries
 -- Business Question:
 -- Network capacity planners require a list of primary distribution hubs capable of handling large-scale pallet storage in the Baltic region. 
---Retrieve the warehouse name, country, and pallet capacity for all warehouses located in 'Baltics' with a capacity of at least 8,000 pallets.
+-- Retrieve the warehouse name, country, and pallet capacity for all warehouses located in 'Baltics' with a capacity of at least 8,000 pallets.
 -- ----------------------------------------------------------
 
 SELECT 
@@ -55,4 +55,20 @@ SELECT
 FROM dim_warehouse
 WHERE warehouse_region = 'Baltics'
     AND capacity_pallets >= 8000;
-   
+
+-- ----------------------------------------------------------
+-- Task 04: Domestic Fulfillment Accounts
+-- LeetCode: 1148. Article Views I
+-- Business Question:
+-- Supply chain management is assessing cross-border exposure versus domestic routing efficiency. 
+-- Retrieve a sorted, unique list of customer IDs whose orders were fulfilled by a warehouse situated in the customer's home country. 
+-- Sort the result in ascending order by customer ID.
+-- ----------------------------------------------------------
+
+SELECT DISTINCT 
+    fo.customer_id
+FROM fact_orders fo
+JOIN dim_customer dc ON fo.customer_id = dc.customer_id
+JOIN dim_warehouse dw ON fo.warehouse_id = dw.warehouse_id
+WHERE dc.country = dw.country
+ORDER BY fo.customer_id ASC; 
