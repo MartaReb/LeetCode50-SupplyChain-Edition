@@ -72,3 +72,18 @@ JOIN dim_customer dc ON fo.customer_id = dc.customer_id
 JOIN dim_warehouse dw ON fo.warehouse_id = dw.warehouse_id
 WHERE dc.country = dw.country
 ORDER BY fo.customer_id ASC; 
+
+-- ----------------------------------------------------------
+-- Task 05: Master Data Quality & Pricing Anomaly Audit
+-- LeetCode: 1683. Invalid Tweets
+-- Business Question:
+-- Supply chain master data governance requires auditing SKU records for system compliance and pricing integrity. 
+-- Retrieve the product identifier and product name for all products where the product name strictly exceeds 30 characters OR where the standard cost exceeds the list price.
+-- ----------------------------------------------------------
+
+SELECT  
+    product_id,
+    product_name
+FROM dim_product
+WHERE CHAR_LENGTH(product_name) > 30 
+   OR standard_cost > list_price;
