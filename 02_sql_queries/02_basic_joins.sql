@@ -42,3 +42,21 @@ SELECT
 FROM fact_orders AS fo
 INNER JOIN dim_product AS dp
 ON fo.product_id = dp.product_id;
+
+-- ----------------------------------------------------------
+-- Task 08: Inactive Strategic Accounts
+-- LeetCode: 1581. Customer Who Visited but Did Not Make Any Transactions
+-- Business Question:
+-- Strategic account executives are auditing high-priority accounts to identify dormant relationships. Retrieve customer identifier, customer name, country, and sales region for all customers with 'Strategic' priority who have not placed any orders in the system.
+-- ----------------------------------------------------------
+
+SELECT  
+	dc.customer_id,
+    dc.customer_name,
+    dc.country,
+    dc.sales_region
+FROM dim_customer AS dc
+LEFT JOIN fact_orders AS fo
+  ON dc.customer_id = fo.customer_id
+WHERE dc.priority = 'Strategic'
+  AND fo.order_id IS NULL;
