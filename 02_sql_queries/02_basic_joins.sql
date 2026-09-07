@@ -24,3 +24,21 @@ SELECT
 FROM fact_orders AS fo
 LEFT JOIN dim_supplier AS ds
 ON fo.supplier_id = ds.supplier_id;
+
+-- ----------------------------------------------------------
+-- Task 07: Product Line Profitability Breakdown
+-- LeetCode: 1068. Product Sales Analysis I
+-- Business Question:
+-- Category managers require visibility into product-level margin generation across historical transactions. 
+-- Retrieve the order identifier, product name, product category, order revenue, and gross profit for all fulfilled orders with matched product records.
+-- ----------------------------------------------------------
+
+SELECT  
+    fo.order_id,
+    dp.product_name,
+    dp.category,
+    fo.revenue,
+    fo.gross_profit
+FROM fact_orders AS fo
+INNER JOIN dim_product AS dp
+ON fo.product_id = dp.product_id;
