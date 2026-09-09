@@ -60,3 +60,24 @@ LEFT JOIN fact_orders AS fo
   ON dc.customer_id = fo.customer_id
 WHERE dc.priority = 'Strategic'
   AND fo.order_id IS NULL;
+
+-- ----------------------------------------------------------
+-- Task 09: Deteriorating Consecutive Lead Time Performance
+-- LeetCode: 197. Rising Temperature
+-- Business Question:
+-- Logistics supervisors track supplier deterioration across continuous fulfillment days. 
+-- Identify order instances where, for the same supplier, an order was placed exactly one day after an earlier order and suffered a strictly higher delivery delay (late_days) than that previous day's order.
+-- ----------------------------------------------------------
+
+SELECT  
+    a.order_id,
+    a.supplier_id,
+    a.order_date AS current_order_date,
+    a.late_days AS current_late_days,
+    b.order_date AS previous_order_date,
+    b.late_days AS previous_late_days
+FROM fact_orders AS a 
+JOIN fact_orders AS b
+  ON a.supplier_id = b.supplier_id
+ AND a.order_date = DATE_ADD(b.order_date, INTERVAL 1 DAY)
+WHERE a.late_days > b.late_days;
