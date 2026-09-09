@@ -23,7 +23,7 @@ SELECT
     ds.risk_tier
 FROM fact_orders AS fo
 LEFT JOIN dim_supplier AS ds
-ON fo.supplier_id = ds.supplier_id;
+    ON fo.supplier_id = ds.supplier_id;
 
 -- ----------------------------------------------------------
 -- Task 07: Product Line Profitability Breakdown
@@ -41,7 +41,7 @@ SELECT
     fo.gross_profit
 FROM fact_orders AS fo
 INNER JOIN dim_product AS dp
-ON fo.product_id = dp.product_id;
+    ON fo.product_id = dp.product_id;
 
 -- ----------------------------------------------------------
 -- Task 08: Inactive Strategic Accounts
@@ -57,9 +57,9 @@ SELECT
     dc.sales_region
 FROM dim_customer AS dc
 LEFT JOIN fact_orders AS fo
-  ON dc.customer_id = fo.customer_id
+    ON dc.customer_id = fo.customer_id
 WHERE dc.priority = 'Strategic'
-  AND fo.order_id IS NULL;
+    AND fo.order_id IS NULL;
 
 -- ----------------------------------------------------------
 -- Task 09: Deteriorating Consecutive Lead Time Performance
@@ -77,7 +77,25 @@ SELECT
     b.order_date AS previous_order_date,
     b.late_days AS previous_late_days
 FROM fact_orders AS a 
-JOIN fact_orders AS b
-  ON a.supplier_id = b.supplier_id
- AND a.order_date = DATE_ADD(b.order_date, INTERVAL 1 DAY)
+INNER JOIN fact_orders AS b
+    ON a.supplier_id = b.supplier_id
+    AND a.order_date = DATE_ADD(b.order_date, INTERVAL 1 DAY)
 WHERE a.late_days > b.late_days;
+
+-- ----------------------------------------------------------
+-- Task 10: Warehouse Lead Time & Dispatch Cycle Efficiency
+-- LeetCode: 1661. Average Time of Process per Machine
+-- Business Question:
+-- Supply chain operational excellence requires benchmarking fulfillment throughput across distribution hubs. Calculate the average fulfillment lead time in days (elapsed duration between order placement and shipment dispatch) for each warehouse. 
+-- Retrieve the warehouse identifier, warehouse name, and average dispatch lead time rounded to 3 decimal places. Sort by average dispatch time ascending.
+-- ----------------------------------------------------------
+
+SELECT  
+	dw.warehouse_id,
+	dw.warehouse_name,
+    ROUND(AVG(DATEDIFF(fc.ship_date, fc.order_date)), 3) AS avg_dispatch_days
+FROM dim_warehouse AS dw 
+INNER JOIN fact_orders AS fc
+    ON dw.warehouse_id = fc.warehouse_id
+GROUP BY dw.warehouse_id, dw.warehouse_name
+ORDER BY avg_dispatch_days ASC;
