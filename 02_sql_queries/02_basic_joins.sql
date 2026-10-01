@@ -99,3 +99,17 @@ INNER JOIN fact_orders AS fc
     ON dw.warehouse_id = fc.warehouse_id
 GROUP BY dw.warehouse_id, dw.warehouse_name
 ORDER BY avg_dispatch_days ASC;
+
+-- ----------------------------------------------------------
+-- Task 11: Vendor Quality Compliance & Low-Defect Screening
+-- LeetCode: 577. Employee Bonus
+-- Business Question:
+-- Supplier quality assurance monitors component defect tolerance to ensure production reliability. 
+-- Retrieve the supplier name and average defect rate for all suppliers whose defect rate is strictly less than 0.015 (1.5%) or is recorded as NULL.
+-- ----------------------------------------------------------
+
+SELECT 
+    supplier_name, avg_defect_rate
+FROM dim_supplier
+WHERE avg_defect_rate < 0.015
+    OR avg_defect_rate IS NULL;
