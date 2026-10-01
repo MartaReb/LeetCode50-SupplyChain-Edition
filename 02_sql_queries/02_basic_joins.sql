@@ -109,7 +109,29 @@ ORDER BY avg_dispatch_days ASC;
 -- ----------------------------------------------------------
 
 SELECT 
-    supplier_name, avg_defect_rate
+    supplier_name, 
+    avg_defect_rate
 FROM dim_supplier
 WHERE avg_defect_rate < 0.015
     OR avg_defect_rate IS NULL;
+
+-- ----------------------------------------------------------
+-- Task 12: Omnichannel Product Distribution Matrix
+-- LeetCode: 1280. Students and Examinations
+-- Business Question:
+-- Omnichannel planners require visibility into SKU market penetration across all distribution channels. 
+-- Generate a complete matrix of every product and every sales channel, showing the total number of orders fulfilled for each pair (displaying 0 if no orders exist). 
+-- Sort by product name ascending, then channel ascending.
+-- ----------------------------------------------------------
+
+SELECT 
+    dp.product_name, 
+    dc.channel, 
+    COUNT(fo.order_id) AS total_orders
+FROM dim_product dp
+CROSS JOIN dim_channel dc
+LEFT JOIN fact_orders fo
+  ON dp.product_id = fo.product_id
+ AND dc.channel = fo.channel
+GROUP BY dp.product_name, dc.channel
+ORDER BY dp.product_name ASC, dc.channel ASC;
