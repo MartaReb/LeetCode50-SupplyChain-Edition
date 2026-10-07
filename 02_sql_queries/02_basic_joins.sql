@@ -131,7 +131,28 @@ SELECT
 FROM dim_product dp
 CROSS JOIN dim_channel dc
 LEFT JOIN fact_orders fo
-  ON dp.product_id = fo.product_id
- AND dc.channel = fo.channel
+    ON dp.product_id = fo.product_id
+    AND dc.channel = fo.channel
 GROUP BY dp.product_name, dc.channel
 ORDER BY dp.product_name ASC, dc.channel ASC;
+
+-- ----------------------------------------------------------
+-- Task 13: Vendor Quality Compliance Audit
+-- LeetCode: 1587. Bank Account Summary II
+-- Business Question:
+-- Vendor management is conducting a quality compliance review. 
+-- Identify all suppliers whose average fulfillment delay across all completed orders is strictly less than 1.0 day AND whose recorded average defect rate is not null. 
+-- Retrieve supplier name, average delay (rounded to 2 decimals), and recorded defect rate. Sort by average delay ascending.
+-- ----------------------------------------------------------
+
+SELECT 
+    ds.supplier_name, 
+    ROUND(AVG(fo.late_days),2) AS avg_late_days, 
+    ds.avg_defect_rate
+FROM fact_orders fo
+LEFT JOIN dim_supplier ds
+    ON fo.supplier_id = ds.supplier_id
+WHERE ds.avg_defect_rate IS NOT NULL
+GROUP BY ds.supplier_name, ds.avg_defect_rate
+HAVING ROUND(AVG(fo.late_days),2) < 1.0
+ORDER BY avg_late_days ASC;
