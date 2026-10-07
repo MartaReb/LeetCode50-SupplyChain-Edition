@@ -156,3 +156,25 @@ WHERE ds.avg_defect_rate IS NOT NULL
 GROUP BY ds.supplier_name, ds.avg_defect_rate
 HAVING ROUND(AVG(fo.late_days),2) < 1.0
 ORDER BY avg_late_days ASC;
+
+-- ----------------------------------------------------------
+-- Task 14: Regional Sales Category Performance
+-- LeetCode: 1173. Immediate Food Delivery I
+-- Business Question:
+-- Commercial leadership is reviewing sales region coverage and category revenue contribution. 
+-- Retrieve the sales region name, product category, total count of fulfilled orders, and total generated revenue (rounded to 2 decimal places) for all orders with revenue strictly greater than zero where a sales region is assigned. Sort by sales region ascending, then total revenue descending.
+-- ----------------------------------------------------------
+
+SELECT 
+    dc.sales_region, 
+    dp.category, 
+    COUNT(fo.order_id) AS total_orders, 
+    ROUND(SUM(fo.revenue),2) AS total_revenue
+FROM dim_customer dc
+INNER JOIN fact_orders fo
+    ON dc.customer_id = fo.customer_id
+INNER JOIN dim_product dp
+    ON dp.product_id = fo.product_id
+WHERE revenue > 0 AND dc.sales_region IS NOT NULL
+GROUP BY dc.sales_region, dp.category
+ORDER BY dc.sales_region ASC, total_revenue DESC;
