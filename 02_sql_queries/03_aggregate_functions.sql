@@ -1,0 +1,5 @@
+-- ==========================================================
+-- PROJECT: Supply Chain Analytics (SQL 50 Leet Code)
+-- SECTION 3: Aggregate Functions (Tasks 15 - 24)
+-- FILE: 02_sql_queries/03_aggregate_functions.sql
+-- ==========================================================
