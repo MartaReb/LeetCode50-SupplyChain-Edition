@@ -26,3 +26,24 @@ LEFT JOIN fact_orders fo
 WHERE dc.priority IN ('Strategic', 'High')
 GROUP BY dc.customer_id, dc.customer_name, dc.priority
 ORDER BY total_revenue DESC;
+
+-- ----------------------------------------------------------
+-- Task 16: Product Category Volume & Revenue Performance
+-- LeetCode: 1141. User Activity for the Past 30 Days I
+-- Business Question:
+-- Assortment planners require product category performance metrics. 
+-- Calculate the total quantity sold, total generated revenue (rounded to 2 decimals), and average unit price (rounded to 2 decimals) for each product category. 
+-- Filter for categories with total quantity sold of at least 100 units. Sort by total revenue descending.
+-- ----------------------------------------------------------
+
+SELECT 
+    dp.category, 
+    SUM(fo.order_qty) AS total_quantity_sold, 
+    ROUND(SUM(fo.revenue), 2) AS total_revenue,
+    ROUND(AVG(fo.unit_price), 2) AS avg_unit_price
+FROM dim_product dp
+INNER JOIN fact_orders fo
+    ON dp.product_id = fo.product_id
+GROUP BY dp.category
+HAVING total_quantity_sold >= 100
+ORDER BY total_revenue DESC;
