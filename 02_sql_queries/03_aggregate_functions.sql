@@ -47,3 +47,23 @@ INNER JOIN fact_orders fo
 GROUP BY dp.category
 HAVING total_quantity_sold >= 100
 ORDER BY total_revenue DESC;
+
+-- ----------------------------------------------------------
+-- Task 17: Inactive Distribution Hubs & Idle Warehouse Audit
+-- LeetCode: 183. Customers Who Never Order
+-- Business Question:
+-- Logistics controlling is auditing network utilization to identify idle distribution hubs. 
+-- Retrieve the warehouse identifier, warehouse name and country for all warehouses that have zero recorded fulfilled orders in the system. 
+-- Sort by warehouse name ascending.
+-- ----------------------------------------------------------
+
+SELECT 
+    dw.warehouse_id, 
+    dw.warehouse_name, 
+    dw.country
+FROM dim_warehouse dw
+LEFT JOIN fact_orders fo
+    ON dw.warehouse_id = fo.warehouse_id
+GROUP BY dw.warehouse_id, dw.warehouse_name, dw.country
+HAVING COUNT(fo.order_id) = 0
+ORDER BY dw.warehouse_name ASC;
