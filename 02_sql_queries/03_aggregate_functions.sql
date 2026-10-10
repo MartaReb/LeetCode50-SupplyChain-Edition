@@ -67,3 +67,21 @@ LEFT JOIN fact_orders fo
 GROUP BY dw.warehouse_id, dw.warehouse_name, dw.country
 HAVING COUNT(fo.order_id) = 0
 ORDER BY dw.warehouse_name ASC;
+
+-- ----------------------------------------------------------
+-- Task 18: Quarterly Order Volume & Revenue Trends
+-- LeetCode: 1484. Group Sold Products By The Date
+-- Business Question:
+-- Financial controlling requires quarterly aggregation of order volume and total revenue to monitor seasonal demand patterns. 
+-- Extract the calendar year and quarter from the order date, aggregate total order count and total revenue (rounded to 2 decimal places), and group by year and quarter. 
+--Sort chronologically by year ascending, then quarter ascending.
+-- ----------------------------------------------------------
+
+SELECT 
+    YEAR(order_date) AS order_year, 
+    QUARTER(order_date) AS order_quarter, 
+    COUNT(order_id) AS total_orders, 
+    ROUND(SUM(revenue), 2) AS total_revenue
+FROM fact_orders
+GROUP BY YEAR(order_date), QUARTER(order_date)
+ORDER BY order_year ASC, order_quarter ASC;
