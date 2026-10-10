@@ -85,3 +85,25 @@ SELECT
 FROM fact_orders
 GROUP BY YEAR(order_date), QUARTER(order_date)
 ORDER BY order_year ASC, order_quarter ASC;
+
+-- ----------------------------------------------------------
+-- Task 19: Customer Average Order Value (AOV) & Tier Analysis
+-- LeetCode: 586. Customer Placing the Largest Number of Orders
+-- Business Question:
+-- Account managers need to identify high-yield accounts based on Average Order Value (AOV). 
+-- Calculate the total order count, total revenue (rounded to 2 decimals), and AOV (rounded to 2 decimals) for each customer with at least 3 completed orders. 
+-- Sort by AOV descending.
+-- ----------------------------------------------------------
+
+SELECT 
+    dc.customer_name,
+    dc.customer_segment,
+    COUNT(fo.order_id) AS total_orders,
+    ROUND(SUM(fo.revenue),2) AS total_revenue,
+    ROUND(AVG(fo.revenue),2) AS avg_order_value
+FROM dim_customer dc
+INNER JOIN fact_orders fo
+    ON dc.customer_id = fo.customer_id
+GROUP BY dc.customer_id, dc.customer_name, dc.customer_segment
+HAVING COUNT(fo.order_id) >= 3
+ORDER BY avg_order_value DESC;
