@@ -107,3 +107,26 @@ INNER JOIN fact_orders fo
 GROUP BY dc.customer_id, dc.customer_name, dc.customer_segment
 HAVING COUNT(fo.order_id) >= 3
 ORDER BY avg_order_value DESC;
+
+-- ----------------------------------------------------------
+-- Task 20: High-Volume Logistics Route Delay Analysis
+-- LeetCode: 1174. Immediate Food Delivery II
+-- Business Question:
+-- Logistics operations requires a bottleneck analysis for major shipping routes. For every route combining warehouse name and destination customer country, calculate the total order volume, average delivery delay (rounded to 2 decimals), and maximum recorded delay in days. 
+-- Filter for routes handling at least 5 orders and sort by average delay descending.
+-- ----------------------------------------------------------
+
+SELECT
+    dw.warehouse_name,
+    dc.country,
+    COUNT(fo.order_id) AS total_orders,
+    ROUND(AVG(fo.late_days),2) AS avg_late_days,
+    MAX(fo.late_days) AS max_late_days
+FROM dim_warehouse dw
+INNER JOIN fact_orders fo
+ON dw.warehouse_id = fo.warehouse_id
+INNER JOIN dim_customer dc
+    ON dc.customer_id = fo.customer_id
+GROUP BY dw.warehouse_name, dc.country
+HAVING COUNT(fo.order_id) >= 5
+ORDER BY avg_late_days DESC;
