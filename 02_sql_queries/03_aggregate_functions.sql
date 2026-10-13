@@ -130,3 +130,24 @@ INNER JOIN dim_customer dc
 GROUP BY dw.warehouse_name, dc.country
 HAVING COUNT(fo.order_id) >= 5
 ORDER BY avg_late_days DESC;
+
+-- ----------------------------------------------------------
+-- Task 21: Supplier On-Time Delivery Rate & Conditional Aggregation
+-- LeetCode: 1193. Monthly Transactions I
+-- Business Question:
+-- Vendor operations requires a breakdown of on-time versus late fulfillment per supplier. 
+--For suppliers handling at least 3 orders, calculate total orders, count of late orders (where late_days > 0), and the percentage of late orders rounded to 2 decimal places. 
+--Sort by late order percentage descending, then total orders descending.
+-- ----------------------------------------------------------
+
+SELECT
+	ds.supplier_name,
+	COUNT(fo.order_id) AS total_orders,
+	SUM(CASE WHEN fo.late_days > 0 THEN 1 ELSE 0 END ) AS late_orders_count,
+	ROUND((SUM(CASE WHEN fo.late_days > 0 THEN 1 ELSE 0 END) / COUNT(fo.order_id)) * 100, 2) AS late_order_pct
+FROM dim_supplier ds
+INNER JOIN fact_orders fo
+	ON ds.supplier_id = fo.supplier_id
+GROUP BY ds.supplier_id, ds.supplier_name
+HAVING COUNT(fo.order_id) >= 3
+ORDER BY late_order_pct DESC, total_orders DESC;
