@@ -151,3 +151,24 @@ INNER JOIN fact_orders fo
 GROUP BY ds.supplier_id, ds.supplier_name
 HAVING COUNT(fo.order_id) >= 3
 ORDER BY late_order_pct DESC, total_orders DESC;
+
+-- ----------------------------------------------------------
+-- Task 22: Warehouse Perfect Order Rate Analysis
+-- LeetCode: 1193. Monthly Transactions I
+-- Business Question:
+-- Logistics management requires evaluating order accuracy across hubs. A 'Perfect Order' has zero late days and zero damaged items. 
+-- For warehouses handling at least 10 orders, calculate total orders, count of perfect orders, and the perfect order percentage rounded to 2 decimal places. 
+-- Sort by perfect order percentage descending.
+-- ----------------------------------------------------------
+
+SELECT
+    dw.warehouse_name,
+    COUNT(fo.order_id) AS total_orders,
+    SUM(CASE WHEN fo.late_days = 0 AND fo.quality_issue_flag = 0 THEN 1 ELSE 0 END) AS perfect_orders_count,
+    ROUND((SUM(CASE WHEN fo.late_days = 0 AND fo.quality_issue_flag = 0 THEN 1 ELSE 0 END) / COUNT(fo.order_id))*100,2) AS perfect_order_pct
+FROM dim_warehouse dw
+INNER JOIN fact_orders fo
+    ON dw.warehouse_id = fo.warehouse_id
+GROUP BY dw.warehouse_id, dw.warehouse_name
+HAVING COUNT(fo.order_id) >= 10
+ORDER BY perfect_order_pct DESC;
