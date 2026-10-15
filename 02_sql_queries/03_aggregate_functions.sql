@@ -172,3 +172,26 @@ INNER JOIN fact_orders fo
 GROUP BY dw.warehouse_id, dw.warehouse_name
 HAVING COUNT(fo.order_id) >= 10
 ORDER BY perfect_order_pct DESC;
+
+-- ----------------------------------------------------------
+-- Task 23: Product Gross Margin Tiering & Portfolio Profitability
+-- LeetCode: 1393. Capital Gain/Loss
+-- Business Question:
+-- Finance controlling requires margin segmentation across product lines. -- Calculate gross margin % per order as ((revenue - cost) / revenue) * 100. For each product with at least 5 completed orders with revenue > 0, aggregate total orders, count of high-margin orders (margin >= 30%), count of low-margin orders (margin < 10%), and total revenue (rounded to 2 decimals). 
+-- Sort by high-margin orders descending, then total revenue descending.
+-- ----------------------------------------------------------
+
+SELECT
+    dp.product_id,
+    dp.product_name,
+    COUNT(fo.order_id) AS total_orders,
+    SUM(CASE WHEN (((fo.revenue - fo.cogs) / fo.revenue) * 100) >= 30 THEN 1 ELSE 0 END) AS high_margin_orders,
+    SUM(CASE WHEN (((fo.revenue - fo.cogs) / fo.revenue) * 100) < 10 THEN 1 ELSE 0 END) AS low_margin_orders,
+    ROUND(SUM(fo.revenue),2) AS total_revenue
+FROM dim_product dp
+INNER JOIN fact_orders fo
+    ON dp.product_id = fo.product_id
+WHERE fo.revenue > 0
+GROUP BY dp.product_id, dp.product_name
+HAVING COUNT(fo.order_id) >= 5
+ORDER BY high_margin_orders DESC, total_revenue DESC;
