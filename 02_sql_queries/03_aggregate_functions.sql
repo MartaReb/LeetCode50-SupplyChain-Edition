@@ -195,3 +195,26 @@ WHERE fo.revenue > 0
 GROUP BY dp.product_id, dp.product_name
 HAVING COUNT(fo.order_id) >= 5
 ORDER BY high_margin_orders DESC, total_revenue DESC;
+
+-- ----------------------------------------------------------
+-- Task 24: Comprehensive Regional Performance Dashboard
+-- LeetCode: 1193. Monthly Transactions I
+-- Business Question:
+-- Executive leadership requires a regional sales breakdown. 
+-- For every assigned sales region (sales_region IS NOT NULL), aggregate total order volume, total revenue (rounded to 2 decimals), average order value (rounded to 2 decimals), average delivery delay (rounded to 1 decimal), and count of quality issue orders (quality_issue_flag = 1). 
+-- Sort by total revenue descending.
+-- ----------------------------------------------------------
+
+SELECT
+    dc.sales_region,
+    COUNT(fo.order_id) AS total_orders,
+    ROUND(SUM(fo.revenue),2) AS total_revenue,
+    ROUND(AVG(fo.revenue),2) AS avg_order_value,
+    ROUND(AVG(fo.late_days),1) AS avg_late_days,
+    SUM(CASE WHEN fo.quality_issue_flag = 1 THEN 1 ELSE 0 END ) AS quality_issue_orders
+FROM dim_customer dc
+LEFT JOIN fact_orders fo
+    ON dc.customer_id = fo.customer_id
+WHERE dc.sales_region IS NOT NULL
+GROUP BY dc.sales_region
+ORDER BY total_revenue DESC;
