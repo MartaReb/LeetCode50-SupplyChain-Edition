@@ -35,3 +35,25 @@ FROM
     WHERE dc.sales_region IS NOT NULL) AS t
 WHERE revenue > avg_revenue
 ORDER BY revenue DESC;
+
+
+-- ----------------------------------------------------------
+-- Task 26: Zero-Sales & Inactive Product Portfolio Audit
+-- LeetCode: 183. Customers Who Never Order
+-- Business Question:
+-- Inventory management needs to identify dead stock / unorderable product listings. 
+-- Retrieve the product identifier, product name, category for all products in dim_product that have never been ordered in fact_orders. 
+-- Sort by category ascending, then product name ascending.
+-- ----------------------------------------------------------
+
+SELECT 
+    dp.product_id,
+    dp.product_name,
+    dp.category
+FROM dim_product dp
+WHERE NOT EXISTS (
+    SELECT 1 
+    FROM fact_orders fo 
+    WHERE fo.product_id = dp.product_id
+)
+ORDER BY dp.category ASC, dp.product_name ASC;
