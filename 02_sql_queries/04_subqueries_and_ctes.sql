@@ -11,7 +11,8 @@ USE supply_chain_db;
 -- LeetCode: 585. Investments in 2016
 -- Business Question:
 -- Commercial analytics needs to identify high-value transaction outliers within each market. 
--- Retrieve all orders where the order revenue exceeds the average order revenue of that order's specific sales region. Include order identifier, order date, customer name, sales region, and revenue (rounded to 2 decimals). 
+-- Retrieve all orders where the order revenue exceeds the average order revenue of that order's specific sales region. 
+-- Include order identifier, order date, customer name, sales region, and revenue (rounded to 2 decimals). 
 -- Sort by revenue descending.
 -- ----------------------------------------------------------
 
@@ -57,3 +58,33 @@ WHERE NOT EXISTS (
     WHERE fo.product_id = dp.product_id
 )
 ORDER BY dp.category ASC, dp.product_name ASC;
+
+-- ----------------------------------------------------------
+-- Task 27: Top Performing Product per Category (Ranking with CTEs)
+-- LeetCode: 184. Department Highest Salary (adapted for Products/Revenue)
+-- Business Question:
+-- Category managers need to identify the single highest-grossing product in their respective portfolios. 
+-- Calculate the total revenue per product, rank them within each category, and filter the results to show only the #1 product per category. 
+-- Sort by category ascending.
+-- ----------------------------------------------------------
+
+WITH revenue_cte AS (
+    SELECT 
+        dp.category,
+        dp.product_id,
+        dp.product_name,
+        ROUND(SUM(fo.revenue), 2) AS total_revenue,
+        RANK() OVER(PARTITION BY dp.category ORDER BY SUM(fo.revenue) DESC) as product_rank
+    FROM fact_orders fo
+    INNER JOIN dim_product dp
+        ON dp.product_id = fo.product_id
+    GROUP BY dp.category, dp.product_id, dp.product_name
+)
+SELECT 
+    category,
+    product_id,
+    product_name,
+    total_revenue
+FROM revenue_cte
+WHERE product_rank = 1
+ORDER BY category ASC;
