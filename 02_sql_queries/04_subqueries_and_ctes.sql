@@ -88,3 +88,32 @@ SELECT
 FROM revenue_cte
 WHERE product_rank = 1
 ORDER BY category ASC;
+
+-- ----------------------------------------------------------
+-- Task 28: Customer First Order (Onboarding) Analysis
+-- LeetCode: 512. Game Play Analysis II (adapted for Orders)
+-- Business Question:
+-- CRM needs to identify the exact date and revenue of each customer's very first order for anniversary campaigns. 
+-- Find the earliest order date per customer and its associated revenue. 
+-- If there are multiple orders on that first day, pick the one with the highest revenue. 
+-- Sort by first order date ascending.
+-- ----------------------------------------------------------
+
+WITH rank_orders AS (
+    SELECT 
+        fo.customer_id,
+        dm.customer_name,
+        fo.order_date,
+        fo.revenue,
+        ROW_NUMBER() OVER(PARTITION BY fo.customer_id ORDER BY fo.order_date ASC, fo.revenue DESC) AS rn
+    FROM fact_orders fo
+    INNER JOIN dim_customer dm
+        ON fo.customer_id = dm.customer_id
+)
+SELECT 
+    customer_name,
+    order_date AS first_order_date,
+    ROUND(revenue, 2) AS first_order_revenue
+FROM rank_orders
+WHERE rn = 1
+ORDER BY first_order_date ASC;
