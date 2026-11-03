@@ -117,3 +117,26 @@ SELECT
 FROM rank_orders
 WHERE rn = 1
 ORDER BY first_order_date ASC;
+
+-- ----------------------------------------------------------
+-- Task 29: Running Total (Cumulative Revenue) by Month
+-- LeetCode: 1204. Last Person to Fit in the Bus (concept of Running Total)
+-- Business Question:
+-- Finance tracking requires a month-over-month running total of revenue. 
+-- First, use a CTE to aggregate total revenue per month (using DATE_FORMAT(order_date, '%Y-%m')). 
+-- Then, in the main query, calculate the cumulative (running) total revenue up to that month using a window function. Sort chronologically.
+-- ----------------------------------------------------------
+
+WITH month_revenue_cte AS (
+    SELECT
+        DATE_FORMAT(order_date, '%Y-%m') AS order_month,
+        SUM(revenue) AS monthly_revenue
+    FROM fact_orders
+    GROUP BY DATE_FORMAT(order_date, '%Y-%m')
+)
+SELECT
+    order_month,
+    ROUND(monthly_revenue, 2) AS monthly_revenue,
+    ROUND(SUM(monthly_revenue) OVER(ORDER BY order_month ASC), 2) AS running_total
+FROM month_revenue_cte
+ORDER BY order_month ASC;
