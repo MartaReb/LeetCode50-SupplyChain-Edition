@@ -140,3 +140,27 @@ SELECT
     ROUND(SUM(monthly_revenue) OVER(ORDER BY order_month ASC), 2) AS running_total
 FROM month_revenue_cte
 ORDER BY order_month ASC;
+
+-- ----------------------------------------------------------
+-- Task 30: Month-over-Month (MoM) Revenue Growth
+-- LeetCode: 1193. Monthly Transactions I (extension) / 603. Consecutive Available Seats (Window Logic)
+-- Business Question:
+-- Finance needs to track the Month-over-Month (MoM) revenue growth rate. -- Calculate the total revenue per month, find the previous month's revenue, and compute the percentage change. 
+-- Return the month, current revenue, previous revenue, and MoM growth percentage (all rounded to 2 decimals). Sort chronologically.
+-- ----------------------------------------------------------
+
+WITH monthly_revenue_cte AS(
+    SELECT
+        DATE_FORMAT(order_date, '%Y-%m') AS order_month,
+        ROUND(SUM(revenue),2) AS monthly_revenue,
+        ROUND(LAG(SUM(revenue)) OVER(ORDER BY DATE_FORMAT(order_date, '%Y-%m')),2) AS prev_month_revenue
+    FROM fact_orders
+    GROUP BY DATE_FORMAT(order_date, '%Y-%m')
+)
+SELECT
+    order_month,
+    monthly_revenue,
+    prev_month_revenue,
+    ROUND((((monthly_revenue-prev_month_revenue)/prev_month_revenue)*100),2) AS mom_growth_pct
+FROM monthly_revenue_cte
+ORDER BY order_month ASC;
