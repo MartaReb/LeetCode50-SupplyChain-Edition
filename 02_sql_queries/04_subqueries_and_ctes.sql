@@ -164,3 +164,32 @@ SELECT
     ROUND((((monthly_revenue-prev_month_revenue)/prev_month_revenue)*100),2) AS mom_growth_pct
 FROM monthly_revenue_cte
 ORDER BY order_month ASC;
+
+-- ----------------------------------------------------------
+-- Task 31: 3-Month Rolling Average Revenue
+-- LeetCode: 1321. Restaurant Growth (Rolling Average Concept)
+-- Business Question:
+-- Finance wants to smooth out seasonality by looking at a 3-month rolling average of revenue. 
+-- Calculate the total revenue per month. Then, compute the average of the revenue for the current month and the two preceding months (a 3-month moving average), rounding both metrics to 2 decimal places. 
+-- Sort chronologically.
+-- ----------------------------------------------------------
+
+WITH monthly_sales AS (
+    SELECT
+        DATE_FORMAT(order_date, '%Y-%m') AS order_month,
+        SUM(revenue) AS monthly_revenue
+    FROM fact_orders
+    GROUP BY DATE_FORMAT(order_date, '%Y-%m')
+)
+SELECT
+    order_month,
+    ROUND(monthly_revenue, 2) AS monthly_revenue,
+    ROUND(
+        AVG(monthly_revenue) OVER(
+            ORDER BY order_month ASC 
+            ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+        ), 
+    2) AS rolling_3m_avg
+FROM monthly_sales
+ORDER BY order_month ASC;
+
