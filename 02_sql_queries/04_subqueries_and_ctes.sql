@@ -193,3 +193,38 @@ SELECT
 FROM monthly_sales
 ORDER BY order_month ASC;
 
+-- ----------------------------------------------------------
+-- Task 32: Customer Reorder Velocity & Inter-Order Interval Analysis
+-- LeetCode: 1141. User Activity / 603. Consecutive Events (LAG + Multi-CTE)
+-- Business Question:
+-- Demand planning and CRM want to identify high-frequency repeat buyers. Calculate the number of days between consecutive orders for each customer. 
+-- For customers with at least 2 orders, compute their total order count and average days between orders (rounded to 1 decimal). 
+-- Filter to include only customers whose average reorder interval is shorter than the overall company-wide average interval across all consecutive order pairs. 
+-- Sort by average days ascending, then total orders descending.
+-- ----------------------------------------------------------
+
+WITH order_intervals AS (
+    SELECT
+        fo.customer_id,
+        dc.customer_name,
+        dc.customer_segment,
+        fo.order_id,
+        DATEDIFF(
+            fo.order_date,
+            LAG(fo.order_date) OVER(PARTITION BY fo.customer_id ORDER BY fo.order_date ASC)
+        ) AS days_between_orders
+    FROM fact_orders fo
+    INNER JOIN dim_customer dc
+        ON fo.customer_id = dc.customer_id
+)
+SELECT 
+    customer_id,
+    customer_name,
+    customer_segment,
+    COUNT(order_id) AS total_orders,
+    ROUND(AVG(days_between_orders), 1) AS avg_days_between_orders
+FROM order_intervals
+GROUP BY customer_id, customer_name, customer_segment
+HAVING COUNT(order_id) >= 2 
+   AND AVG(days_between_orders) < (SELECT AVG(days_between_orders) FROM order_intervals)
+ORDER BY avg_days_between_orders ASC, total_orders DESC;
